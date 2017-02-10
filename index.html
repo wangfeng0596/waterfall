@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>堆砌瀑布流</title>
+	<script type="text/javascript" src="jquery-3.1.1.js"></script>
+</head>
+<style type="text/css">
+	*{
+		padding: 0;
+		margin: 0;
+	}
+	#waterFall{
+		position: relative;
+		zoom:1;
+		margin: 0 auto;
+	}
+	#waterFall li{
+		width:250px;
+		float: left;
+		list-style: none;
+	}
+	.boxImg{
+		position:relative;
+		border: 1px solid #ccc;
+		background: #eee;
+		margin:15px;
+		text-align: center;
+		color:#792222;
+		padding-top:30px;
+
+	}
+</style>
+<body>
+<ul id='waterFall'></ul>
+</body>
+<script type="text/javascript">
+	var waterFall = {
+		createList:function(id){
+			var htmlStr = "",height;
+			for(var i=0;i<30;i++){
+				height = Math.floor(Math.random()*200+200);
+				htmlStr += '<li><div class="boxImg" style="height:'+height+'px;">第'+(i+1)+'个div块</div></li>';
+			}
+			$("#"+id).html(htmlStr);
+		},
+		getOptIndex:function(list,v){
+			for(var i=0;i<list.length;i++){
+				if(list[i] == v){
+					return i;
+				}
+			}
+		},
+		sortImg:function(id){
+			var _this = this;
+			var h=[],boxH;
+			var lis = $("#"+id).find("li"); 
+			var minH = lis.eq(0).height();
+			var boxW = lis.eq(0).width();
+			var n = $(document).width() / boxW | 0;
+			$("#"+id).css("width",n*boxW + 'px');
+			lis.each(function(index,item){
+				boxH = $(item).height();
+				if(index<n){
+					h[index] = boxH;
+					$(item).css("position","");
+				}else{
+					minH = Math.min.apply({},h);
+					minIndex = _this.getOptIndex(h,minH);
+					h[minIndex] += boxH;
+					$(item).css({
+						"position":"absolute",
+						"top":minH+"px",
+						"left":minIndex*boxW + "px"
+					});
+				}
+			});
+
+		}
+
+	}
+
+	waterFall.createList("waterFall");
+	window.onload = window.onresize = function(){
+		waterFall.sortImg("waterFall");
+	}
+</script>
+</html>	
